@@ -1,15 +1,39 @@
-AWSTemplateFormatVersion: 2010-09-09
+AWSTemplateFormatVersion: "2010-09-09"
 
 Transform: AWS::Serverless-2016-10-31
 
 Description:
   Provisioning of AWS resources for the TTEC Call Center backend
 
+Globals:
+  Function:
+    Runtime: nodejs14.x
+
 Parameters:
   DynamoDBTableName:
     Type: String
     Default: customer-vanity-numbers
     Description: Name of the DynamoDB table
+  
+  LambdaRoleName:
+    Type: String
+    Default: call-center-lambda-role
+    Description: Name of the Lambda role
+
+  LambdaLocation:
+    Type: String
+    Default: lambda/
+    Description: Location of the Lambda source code
+
+  LambdaHandler:
+    Type: String
+    Default: index.handler
+    Description: Lambda function handler
+
+  LambdaName:
+    Type: String
+    Default: call-center-lambda
+    Description: Name of the Lambda function
 
 Resources:
   DynamoDBTable:
@@ -27,3 +51,51 @@ Resources:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
       TableName: !Ref DynamoDBTableName
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - 
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Description: Lambda role that allows read/write operations to the DynamoDB table
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: /
+      Policies: 
+        -
+          PolicyName: DynamoDBOperations
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+            - 
+              Effect: Allow
+              Action:
+                - dynamodb:GetItem
+                - dynamodb:PutItem
+              Resource:
+                - !GetAtt DynamoDBTable.Arn
+      RoleName: !Ref LambdaRoleName
+      Tags: 
+        -
+          Key: Name
+          Value: TTEC Call Center Lambda role
+
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: !Ref LambdaLocation
+      Description: Lambda function that converts phone numbers to vanity numbers and save the best 5 resulting vanity numbers 
+      FunctionName: !Ref LambdaName
+      Handler: !Ref LambdaHandler
+      PackageType: Zip
+      Role: !GetAtt LambdaRole.Arn
+      Timeout: 8 #This is the maximum timeout allowed by AWS Connect
+      Tags: 
+        Name: TTEC Call Center Lambda function

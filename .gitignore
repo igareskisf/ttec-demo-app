@@ -1,1 +1,4 @@
 backend/.aws-sam
+backend/lambda/node_modules
+backend/lambda/logs
+backend/lambda/events
