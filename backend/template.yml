@@ -35,6 +35,15 @@ Parameters:
     Default: call-center-lambda
     Description: Name of the Lambda function
 
+  InstanceArn:
+    Type: String
+    Description: Arn of the AWS Connect
+
+  ContactFlowName:
+    Type: String
+    Default: ContactFlow
+    Description: Name of the AWS Connect ContactFlow
+
 Resources:
   DynamoDBTable:
     Type: AWS::DynamoDB::Table
@@ -99,3 +108,20 @@ Resources:
       Timeout: 8 #This is the maximum timeout allowed by AWS Connect
       Tags: 
         Name: TTEC Call Center Lambda function
+
+  BasicContactFlow:
+    Type: AWS::Connect::ContactFlow
+    Properties: 
+      Content: !Sub
+        - "{\r\n    \"Version\":\"2019-10-30\",\r\n    \"StartAction\":\"27a24696-c4d7-425d-8f19-f723e2667432\",\r\n    \"Metadata\":{\r\n       \"entryPointPosition\":{\r\n          \"x\":15,\r\n          \"y\":15\r\n       },\r\n       \"snapToGrid\":false,\r\n       \"ActionMetadata\":{\r\n          \"6e814b74-4d89-4988-b21a-fa82172a75de\":{\r\n             \"position\":{\r\n                \"x\":501,\r\n                \"y\":19\r\n             },\r\n             \"dynamicMetadata\":{\r\n                \r\n             },\r\n             \"useDynamic\":false\r\n          },\r\n          \"27a24696-c4d7-425d-8f19-f723e2667432\":{\r\n             \"position\":{\r\n                \"x\":154,\r\n                \"y\":35\r\n             },\r\n             \"useDynamic\":false\r\n          },\r\n          \"b00234e3-6f71-48f5-b18c-cf3204669e71\":{\r\n             \"position\":{\r\n                \"x\":1001,\r\n                \"y\":63\r\n             },\r\n             \"useDynamic\":false\r\n          },\r\n          \"27a9f443-1042-4e1b-b945-c23024633ada\":{\r\n             \"position\":{\r\n                \"x\":805,\r\n                \"y\":176\r\n             },\r\n             \"useDynamic\":false\r\n          },\r\n          \"f7f267aa-e6c9-4c8f-830d-fa6432cb3232\":{\r\n             \"position\":{\r\n                \"x\":504,\r\n                \"y\":283\r\n             }\r\n          }\r\n       }\r\n    },\r\n    \"Actions\":[\r\n       {\r\n          \"Identifier\":\"6e814b74-4d89-4988-b21a-fa82172a75de\",\r\n          \"Parameters\":{\r\n             \"LambdaFunctionARN\":\"${LambdaArn}\",\r\n             \"InvocationTimeLimitSeconds\":\"8\"\r\n          },\r\n          \"Transitions\":{\r\n             \"NextAction\":\"b00234e3-6f71-48f5-b18c-cf3204669e71\",\r\n             \"Errors\":[\r\n                {\r\n                   \"NextAction\":\"27a9f443-1042-4e1b-b945-c23024633ada\",\r\n                   \"ErrorType\":\"NoMatchingError\"\r\n                }\r\n             ],\r\n             \"Conditions\":[\r\n                \r\n             ]\r\n          },\r\n          \"Type\":\"InvokeLambdaFunction\"\r\n       },\r\n       {\r\n          \"Identifier\":\"27a24696-c4d7-425d-8f19-f723e2667432\",\r\n          \"Parameters\":{\r\n             \"SSML\":\"Please hold on while your vanity numbers are generated.\"\r\n          },\r\n          \"Transitions\":{\r\n             \"NextAction\":\"6e814b74-4d89-4988-b21a-fa82172a75de\",\r\n             \"Errors\":[\r\n                {\r\n                   \"NextAction\":\"f7f267aa-e6c9-4c8f-830d-fa6432cb3232\",\r\n                   \"ErrorType\":\"NoMatchingError\"\r\n                }\r\n             ],\r\n             \"Conditions\":[\r\n                \r\n             ]\r\n          },\r\n          \"Type\":\"MessageParticipant\"\r\n       },\r\n       {\r\n          \"Identifier\":\"b00234e3-6f71-48f5-b18c-cf3204669e71\",\r\n          \"Parameters\":{\r\n             \"SSML\":\"Your vanity numbers are: $.External.FirstNumber, $.External.SecondNumber, $.External.ThirdNumber\"\r\n          },\r\n          \"Transitions\":{\r\n             \"NextAction\":\"f7f267aa-e6c9-4c8f-830d-fa6432cb3232\",\r\n             \"Errors\":[\r\n                {\r\n                   \"NextAction\":\"f7f267aa-e6c9-4c8f-830d-fa6432cb3232\",\r\n                   \"ErrorType\":\"NoMatchingError\"\r\n                }\r\n             ],\r\n             \"Conditions\":[\r\n                \r\n             ]\r\n          },\r\n          \"Type\":\"MessageParticipant\"\r\n       },\r\n       {\r\n          \"Identifier\":\"27a9f443-1042-4e1b-b945-c23024633ada\",\r\n          \"Parameters\":{\r\n             \"SSML\":\"We could not find any matches right now. Please try again later.\"\r\n          },\r\n          \"Transitions\":{\r\n             \"NextAction\":\"f7f267aa-e6c9-4c8f-830d-fa6432cb3232\",\r\n             \"Errors\":[\r\n                {\r\n                   \"NextAction\":\"f7f267aa-e6c9-4c8f-830d-fa6432cb3232\",\r\n                   \"ErrorType\":\"NoMatchingError\"\r\n                }\r\n             ],\r\n             \"Conditions\":[\r\n                \r\n             ]\r\n          },\r\n          \"Type\":\"MessageParticipant\"\r\n       },\r\n       {\r\n          \"Identifier\":\"f7f267aa-e6c9-4c8f-830d-fa6432cb3232\",\r\n          \"Type\":\"DisconnectParticipant\",\r\n          \"Parameters\":{\r\n             \r\n          },\r\n          \"Transitions\":{\r\n             \r\n          }\r\n       }\r\n    ]\r\n }"
+        - LambdaArn: !GetAtt LambdaFunction.Arn
+      Description: ContactFlow that defines the customer experience and integrates the Lambda function
+      InstanceArn: !Ref InstanceArn
+      Name: TTECBasicContactFlow
+      State: ACTIVE
+      Type: CONTACT_FLOW
+
+Outputs:
+  BasicContactFlowArn:
+    Description: Arn of the generated ContacFlow
+    Value: !GetAtt BasicContactFlow.ContactFlowArn
