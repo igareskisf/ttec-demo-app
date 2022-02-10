@@ -19,9 +19,6 @@ Resources:
         -
           AttributeName: customer-number
           AttributeType: S
-        -
-          AttributeName: vanity-numbers
-          AttributeType: L
       KeySchema: 
         -
           AttributeName: customer-number
