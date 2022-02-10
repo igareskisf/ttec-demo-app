@@ -1,0 +1,13 @@
+version=0.1
+[default.global.parameters]
+stack_name = "ttec-demo-stack"
+
+
+[default.build.parameters]
+ no_beta_features = true
+
+[default.deploy.parameters]
+s3_bucket = "ttec-artifact-repo"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
