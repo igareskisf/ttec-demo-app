@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Transform: AWS::Serverless-2016-10-31
+
+Description:
+  Provisioning of AWS resources for the TTEC Call Center backend
+
+Parameters:
+  DynamoDBTableName:
+    Type: String
+    Default: customer-vanity-numbers
+    Description: Name of the DynamoDB table
+
+Resources:
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions: 
+        -
+          AttributeName: customer-number
+          AttributeType: S
+        -
+          AttributeName: vanity-numbers
+          AttributeType: L
+      KeySchema: 
+        -
+          AttributeName: customer-number
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: !Ref DynamoDBTableName
