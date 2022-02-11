@@ -175,7 +175,7 @@ exports.handler = async (event, context, callback) => {
 
                 // Format the vanity numbers for storing in DynamoDB
                 for (let i = 0; i < finalResult.length; i++) {
-                    finalResult[i] = firstDigits + finalResult[i]
+                    // finalResult[i] = firstDigits + finalResult[i]
                     dynamoDBItems.push({'S': firstDigits + finalResult[i]})
                 }
 

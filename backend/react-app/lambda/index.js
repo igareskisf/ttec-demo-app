@@ -5,6 +5,13 @@ const ddb = new AWS.DynamoDB({
     endpoint: 'http://172.18.0.2:8000'
 })
 
+// Enable CORS
+const cors = {
+    'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key',
+    'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
+    'Access-Control-Allow-Origin': '*'
+}
+
 const getDynamoDBItems = async () => {
     return new Promise((resolve, reject) => {
         ddb.scan({
@@ -65,6 +72,7 @@ exports.handler = async (event, context) => {
         // Success
         return {
             statusCode: 200,
+            headers: cors,
             body: JSON.stringify(result)
         }
     } catch (error) {
@@ -74,6 +82,7 @@ exports.handler = async (event, context) => {
         // Failure
         return {
             statusCode: 500,
+            headers: cors,
             body: JSON.stringify(error.message)
         }
     }
