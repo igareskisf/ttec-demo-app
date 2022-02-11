@@ -45,11 +45,25 @@ Resources:
           - 
             Effect: Allow
             Principal:
-              Service: lambda.amazonaws.com
+              Service: 
+                - lambda.amazonaws.com
+                - apigateway.amazonaws.com
             Action:
               - sts:AssumeRole
       Description: Lambda role for the API Gateway
       Path: /
+      Policies: 
+        -
+          PolicyName: LambdaInvokePermissions
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+            - 
+              Effect: Allow
+              Action:
+                - lambda:InvokeFunction
+              Resource:
+                - !GetAtt LambdaFunction.Arn
       RoleName: !Ref ApiGatewayRoleName
       Tags: 
         -
@@ -86,7 +100,7 @@ Resources:
       Integration: 
         ConnectionType: INTERNET
         Credentials: !GetAtt ApiGatewayRole.Arn
-        IntegrationHttpMethod: GET
+        IntegrationHttpMethod: POST
         PassthroughBehavior: WHEN_NO_MATCH
         Type: AWS_PROXY
         Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations'
