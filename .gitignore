@@ -1,4 +1,8 @@
-backend/.aws-sam
-backend/lambda/node_modules
-backend/lambda/logs
-backend/lambda/events
+backend/call-center/.aws-sam
+backend/call-center/lambda/node_modules
+backend/call-center/lambda/logs
+backend/call-center/lambda/events
+
+backend/react-app/.aws-sam
+backend/react-app/lambda/node_modules
+backend/react-app/lambda/logs

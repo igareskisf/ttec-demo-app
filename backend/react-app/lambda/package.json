@@ -1,0 +1,14 @@
+{
+  "name": "ttec-react-app-lambda",
+  "version": "1.0.0",
+  "description": "Lambda function that retrieve the vanity numbers for the last 5 customer numbers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ilija Gareski",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.1073.0"
+  }
+}

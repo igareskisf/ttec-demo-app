@@ -1,0 +1,164 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Transform: AWS::Serverless-2016-10-31
+
+Description:
+  Provisioning of Lambda and API Gateway for the TTEC frontend application
+
+Globals:
+  Function:
+    Runtime: nodejs14.x
+
+Parameters:
+  ApiGatewayRoleName:
+    Type: String
+    Default: api-gateway-role
+    Description: Name of the API Gateway role
+
+  LambdaRoleName:
+    Type: String
+    Default: react-lambda-role
+    Description: Name of the Lambda role
+
+  LambdaLocation:
+    Type: String
+    Default: lambda/
+    Description: Location of the Lambda source code
+
+  LambdaHandler:
+    Type: String
+    Default: index.handler
+    Description: Lambda function handler
+
+  LambdaName:
+    Type: String
+    Default: react-lambda
+    Description: Name of the Lambda function
+
+Resources:
+  ApiGatewayRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - 
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Description: Lambda role for the API Gateway
+      Path: /
+      RoleName: !Ref ApiGatewayRoleName
+      Tags: 
+        -
+          Key: Name
+          Value: TTEC API Gateway role
+
+  ApiGatewayRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      ApiKeySourceType: HEADER
+      Description: API Gateway REST API for handling the application endpoint requests
+      EndpointConfiguration:
+        Types:
+          - EDGE
+      Name: ttec-api
+      Tags: 
+        -
+          Key: Name
+          Value: TTEC API
+
+  ApiGatewayResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      ParentId: !GetAtt ApiGatewayRestApi.RootResourceId
+      PathPart: vanity-numbers
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayMethod:
+    Type: AWS::ApiGateway::Method
+    Properties: 
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      HttpMethod: GET
+      Integration: 
+        ConnectionType: INTERNET
+        Credentials: !GetAtt ApiGatewayRole.Arn
+        IntegrationHttpMethod: GET
+        PassthroughBehavior: WHEN_NO_MATCH
+        Type: AWS_PROXY
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction.Arn}/invocations'
+      ResourceId: !Ref ApiGatewayResource
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayModel:
+    Type: AWS::ApiGateway::Model
+    Properties: 
+      ContentType: application/json
+      Name: CustomModel
+      RestApiId: !Ref ApiGatewayRestApi
+      Schema: {}
+
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn: ApiGatewayMethod
+    Properties: 
+      Description: API Gateway deployment
+      RestApiId: !Ref ApiGatewayRestApi
+
+  ApiGatewayStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref ApiGatewayDeployment
+      Description: API Gateway stage
+      RestApiId: !Ref ApiGatewayRestApi
+      StageName: v1
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - 
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Description: Lambda role that retrieves the vanity numbers for the last 5 customers
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: /
+      Policies: 
+        -
+          PolicyName: DynamoDBOperations
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+            - 
+              Effect: Allow
+              Action:
+                - dynamodb:GetItem
+              Resource:
+                - !ImportValue DynamoDBTableArn
+      RoleName: !Ref LambdaRoleName
+      Tags: 
+        -
+          Key: Name
+          Value: TTEC React Lambda role
+
+  LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: !Ref LambdaLocation
+      Description: Lambda function that retrieves the vanity numbers for the last 5 customers
+      FunctionName: !Ref LambdaName
+      Handler: !Ref LambdaHandler
+      PackageType: Zip
+      Role: !GetAtt LambdaRole.Arn
+      Timeout: 10
+      Tags: 
+        Name: TTEC React Lambda function

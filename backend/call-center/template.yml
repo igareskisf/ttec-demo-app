@@ -52,10 +52,16 @@ Resources:
         -
           AttributeName: customer-number
           AttributeType: S
+        -
+          AttributeName: time-created
+          AttributeType: N
       KeySchema: 
         -
           AttributeName: customer-number
           KeyType: HASH
+        -
+          AttributeName: time-created
+          KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 5
         WriteCapacityUnits: 5
@@ -106,7 +112,7 @@ Resources:
       PackageType: Zip
       Role: !GetAtt LambdaRole.Arn
       Timeout: 8 #This is the maximum timeout allowed by AWS Connect
-      Tags: 
+      Tags:
         Name: TTEC Call Center Lambda function
 
   BasicContactFlow:
@@ -125,3 +131,8 @@ Outputs:
   BasicContactFlowArn:
     Description: Arn of the generated ContacFlow
     Value: !GetAtt BasicContactFlow.ContactFlowArn
+  DynamoDBTableArn:
+    Description: Arn of the DynamoDB table
+    Value: !GetAtt DynamoDBTable.Arn
+    Export:
+      Name: DynamoDBTableArn

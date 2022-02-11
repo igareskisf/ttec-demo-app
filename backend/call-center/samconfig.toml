@@ -1,0 +1,14 @@
+version=0.1
+[default.global.parameters]
+stack_name = "ttec-call-center-stack"
+
+
+[default.build.parameters]
+no_beta_features = true
+
+[default.deploy.parameters]
+region = "us-east-1"
+s3_bucket = "ttec-deployment-artifacts"
+s3_prefix = "call-center-app"
+capabilities = "CAPABILITY_NAMED_IAM"
+confirm_changeset = true

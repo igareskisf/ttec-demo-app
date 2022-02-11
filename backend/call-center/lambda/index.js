@@ -20,7 +20,7 @@ let permutationsResult = []
 const validateNumberFormat = (number) => {
     // The RegEx expression to match a valid phone number (minim um of 10 digits)
     const validScheme = /^\+1?(\d{10,15})$/
-    return validScheme.test(number);
+    return validScheme.test(number)
 }
 
 /**
@@ -29,21 +29,25 @@ const validateNumberFormat = (number) => {
 */
 const getDynamoDBItems = async (number) => {
     return new Promise((resolve, reject) => {
-        ddb.getItem({
-            TableName: 'customer-vanity-numbers', //Put into an env config
-            Key: {
-                'customer-number': {
+        ddb.query({
+            TableName: 'customer-vanity-numbers-v2', //Put into an env config
+            ExpressionAttributeNames: {
+                '#CustomerNumber': 'customer-number'
+            },
+            ExpressionAttributeValues: {
+                ':cn': {
                     'S': number
                 }
-            }
+            },
+            KeyConditionExpression: '#CustomerNumber = :cn'
         }, function(error, data) {
             if (error) {
                 reject(error)
             } else {
-                if (!data.Item) {
+                if (!data.Items || data.Items.length === 0) {
                     resolve(null)
                 } else {
-                    resolve(data.Item)
+                    resolve(data.Items[0])
                 }
             }
         })
@@ -58,11 +62,14 @@ const getDynamoDBItems = async (number) => {
 const insertDynamoDBItems = async (number, data) => {
     return new Promise((resolve, reject) => {
         ddb.putItem({
-            TableName: 'customer-vanity-numbers', //Put into an env config
+            TableName: 'customer-vanity-numbers-v2', //Put into an env config
             ReturnConsumedCapacity: 'TOTAL',
             Item: {
                 'customer-number': {
                     'S': number
+                },
+                'time-created': {
+                    'N': new Date().getTime().toString()
                 },
                 'vanity-numbers': {
                     'L': data
@@ -133,6 +140,7 @@ exports.handler = async (event, context, callback) => {
         
         // Retrieve existing vanity numbers for the customer (if any) from DynamoDB
         const vanityNumbers = await getDynamoDBItems(number)
+        console.log(vanityNumbers)
 
         if (!vanityNumbers) {
             // Filter the words whose length is less than or equal to the limit to reduce the array size, and sort
@@ -198,6 +206,6 @@ exports.handler = async (event, context, callback) => {
         callback(error)
 
         // Failure
-        return false;
+        return false
     }
 }
