@@ -173,6 +173,12 @@ Resources:
       Handler: !Ref LambdaHandler
       PackageType: Zip
       Role: !GetAtt LambdaRole.Arn
-      Timeout: 10
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_ENV: local,
+          DYNAMODB_HOST: http://localhost:8000,
+          DYNAMODB_TABLE: dummy-table,
+          VANITY_NUMBERS_LIMIT: 5
       Tags: 
         Name: TTEC React Lambda function

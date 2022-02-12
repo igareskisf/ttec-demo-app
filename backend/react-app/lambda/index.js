@@ -2,7 +2,7 @@ const AWS = require('aws-sdk')
 
 // Configure the DynamoDB service object
 const ddb = new AWS.DynamoDB({
-    endpoint: 'http://172.18.0.2:8000'
+    endpoint: process.env.DYNAMODB_HOST || 'localhost'
 })
 
 // Enable CORS
@@ -15,7 +15,7 @@ const cors = {
 const getDynamoDBItems = async () => {
     return new Promise((resolve, reject) => {
         ddb.scan({
-            TableName: 'customer-vanity-numbers-v2', //Put into an env config
+            TableName: process.env.DYNAMODB_TABLE || 'dummy-table',
         }, function(error, data) {
             if (error) {
                 reject(error)
@@ -38,7 +38,7 @@ const getDynamoDBItems = async () => {
 exports.handler = async (event, context) => {
     try {
         // How many items to be returned
-        const limit = 5 //Put into an env config
+        const limit = process.env.VANITY_NUMBERS_LIMIT ? praseInt(process.env.VANITY_NUMBERS_LIMIT) : 5
 
         // Retrieve all the records from the DynamoDB table (inefficient scan operation; to be replaced with a query operation if possible)
         const vanityNumbers = await getDynamoDBItems()

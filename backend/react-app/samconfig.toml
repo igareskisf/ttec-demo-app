@@ -1,14 +1,51 @@
 version=0.1
-[default.global.parameters]
-stack_name = "ttec-react-stack"
 
+[default]
 
+[default.local_invoke]
+[default.local_invoke.parameters]
+env_vars = "env/local.json"
+
+[default.local_start_api]
+[default.local_start_api.parameters]
+env_vars = "env/local.json"
+
+[default.build]
 [default.build.parameters]
 no_beta_features = true
+env_vars = "env/local.json"
 
+[default.deploy]
 [default.deploy.parameters]
+stack_name = "ttec-react-stack"
 region = "us-east-1"
 s3_bucket = "ttec-deployment-artifacts"
 s3_prefix = "react-app"
 capabilities = "CAPABILITY_NAMED_IAM"
 confirm_changeset = true
+env_vars = "env/local.json"
+
+[dev]
+
+[dev.local_invoke]
+[dev.local_invoke.parameters]
+env_vars = "env/dev.json"
+
+[dev.local_start_api]
+[dev.local_start_api.parameters]
+env_vars = "env/dev.json"
+
+[dev.build]
+[dev.build.parameters]
+no_beta_features = true
+env_vars = "env/dev.json"
+
+[dev.deploy]
+[dev.deploy.parameters]
+stack_name = "ttec-react-stack-dev"
+region = "us-east-1"
+s3_bucket = "ttec-deployment-artifacts"
+s3_prefix = "react-app-dev"
+capabilities = "CAPABILITY_NAMED_IAM"
+confirm_changeset = true
+env_vars = "env/dev.json"

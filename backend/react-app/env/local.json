@@ -1,0 +1,8 @@
+{
+    "LambdaFunction": {
+        "NODE_ENV": "local",
+        "DYNAMODB_HOST": "http://172.18.0.2:8000",
+        "DYNAMODB_TABLE": "customer-vanity-numbers-v2",
+        "VANITY_NUMBERS_LIMIT": "5"
+    }
+}
