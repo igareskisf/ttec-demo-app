@@ -112,6 +112,13 @@ Resources:
       PackageType: Zip
       Role: !GetAtt LambdaRole.Arn
       Timeout: 8 #This is the maximum timeout allowed by AWS Connect
+      Environment:
+        Variables:
+          NODE_ENV: local,
+          DYNAMODB_HOST: http://localhost:8000,
+          DYNAMODB_TABLE: dummy-table,
+          VANITY_NUMBERS_LIMIT: 5
+          VANITY_CHARS: 4
       Tags:
         Name: TTEC Call Center Lambda function
 

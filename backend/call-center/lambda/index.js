@@ -3,7 +3,7 @@ const words = require('an-array-of-english-words')
 
 // Configure the DynamoDB service object
 const ddb = new AWS.DynamoDB({
-    endpoint: 'http://172.18.0.2:8000'
+    endpoint: process.env.DYNAMODB_HOST || 'localhost'
 })
 
 // Phone dial pad
@@ -30,7 +30,7 @@ const validateNumberFormat = (number) => {
 const getDynamoDBItems = async (number) => {
     return new Promise((resolve, reject) => {
         ddb.query({
-            TableName: 'customer-vanity-numbers-v2', //Put into an env config
+            TableName: process.env.DYNAMODB_TABLE || 'dummy-table',
             ExpressionAttributeNames: {
                 '#CustomerNumber': 'customer-number'
             },
@@ -62,7 +62,7 @@ const getDynamoDBItems = async (number) => {
 const insertDynamoDBItems = async (number, data) => {
     return new Promise((resolve, reject) => {
         ddb.putItem({
-            TableName: 'customer-vanity-numbers-v2', //Put into an env config
+            TableName: process.env.DYNAMODB_TABLE || 'dummy-table',
             ReturnConsumedCapacity: 'TOTAL',
             Item: {
                 'customer-number': {
@@ -116,10 +116,10 @@ const dialPadPermutations = (input, inputLength, iterator, output) => {
 exports.handler = async (event, context, callback) => {
     try {
         // How many digits will be considered for the vanity numbers
-        const vanityLimit = 4 //Put into an env config
+        const vanityLimit = process.env.VANITY_CHARS ? praseInt(process.env.VANITY_CHARS) : 4
 
         // How many vanity numbers will be considered
-        const topElements = 5 //Put into an env config
+        const topElements = process.env.VANITY_NUMBERS_LIMIT ? praseInt(process.env.VANITY_NUMBERS_LIMIT) : 5
 
         // An array for the best 5 vanity numbers
         let finalResult = []

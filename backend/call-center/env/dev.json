@@ -1,0 +1,9 @@
+{
+    "LambdaFunction": {
+        "NODE_ENV": "development",
+        "DYNAMODB_HOST": "dynamodb.us-east-1.amazonaws.com",
+        "DYNAMODB_TABLE": "customer-vanity-numbers",
+        "VANITY_NUMBERS_LIMIT": "5",
+        "VANITY_CHARS": "4"
+    }
+}
