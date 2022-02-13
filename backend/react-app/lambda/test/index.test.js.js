@@ -27,7 +27,9 @@ describe('React Lambda Unit Test', () => {
             dataStub = {
                 ...dataStub,
                 // Mocking DynamoDB call
-                getDynamoDBItems
+                getDynamoDBItems: () => {
+                    return getDynamoDBItems()
+                }
             }
         })
 
@@ -64,6 +66,7 @@ describe('React Lambda Unit Test', () => {
                 expect(data[0]).to.be.an('object')
                 expect(data[0]).to.have.own.property('customer-number')
                 expect(data[0]['customer-number']).to.be.a('string')
+                expect(data[0]['customer-number']).to.equal('+38976666666')
                 expect(data[0]).to.have.own.property('vanity-numbers')
                 expect(data[0]['vanity-numbers']).to.be.an('array')
                 expect(data[0]['vanity-numbers']).to.have.lengthOf(5)
@@ -174,14 +177,3 @@ describe('React Lambda Unit Test', () => {
         })
     })
 })
-
-// is array
-// is empty
-// array length
-// array reversed
-// status code
-// elements are objects
-// object contains property
-// object contains property value
-// status code error
-// error object

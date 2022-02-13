@@ -1,8 +1,8 @@
 // Mock data
 
-/* SAMPLE OUTPUT
-   "code": 200,
-    "data": [
+/* SAMPLE OUTPUT (simplified)
+    "statusCode": 200,
+    "body": [
         {
            customer-number: "+38976111111"
            vanity-numbers: [
@@ -14,7 +14,7 @@
            ]
        } 
     ]
- */
+*/
 
 // Mock output from the DynamoDB function
 const getDynamoDBItems = async (error, empty) => {
@@ -79,7 +79,17 @@ const getDynamoDBItems = async (error, empty) => {
                 { 'S': '+3897655MNOP' },
                 { 'S': '+3897655QRST' }
             ]}
-        }
+        },
+        {
+            'customer-number': { 'S': '+38976666666' },
+            'vanity-numbers': { 'L': [
+                { 'S': '+3897666ABCD' },
+                { 'S': '+3897666EFGH' },
+                { 'S': '+3897666IJKL' },
+                { 'S': '+3897666MNOP' },
+                { 'S': '+3897666QRST' }
+            ]}
+        },
     ]
 }
 

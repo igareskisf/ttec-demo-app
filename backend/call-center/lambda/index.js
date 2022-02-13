@@ -1,111 +1,10 @@
-const AWS = require('aws-sdk')
 const words = require('an-array-of-english-words')
-
-// Configure the DynamoDB service object
-const ddb = new AWS.DynamoDB({
-    endpoint: process.env.DYNAMODB_HOST || 'http://localhost:8000'
-})
-
-// Phone dial pad
-const dialPad = ['0', '1', 'ABC', 'DEF', 'GHI', 'JKL', 'MNO', 'PQRS', 'TUV', 'WXYZ']
+const { getDynamoDBItems, insertDynamoDBItems } = require('./data-services/dynamodb.js')
+const { dialPadPermutations } = require('./utils/helpers.js')
+const { validateNumberFormat } = require('./validation/validator.js')
 
 // An array to store all of the character permutations from the dial pad
 let permutationsResult = []
-
-/**
-* Function checks the validity of the customer number
-* @param    {string}    number      Customer number
-* @returns  {boolean}               Flag for a validity of the provided number
-*/
-const validateNumberFormat = (number) => {
-    // The RegEx expression to match a valid phone number (minim um of 10 digits)
-    const validScheme = /^\+1?(\d{10,15})$/
-    return validScheme.test(number)
-}
-
-/**
-* Function that retrieves the existing vanity numbers for a customer
-* @param    {string}    number     Customer number
-*/
-const getDynamoDBItems = async (number) => {
-    return new Promise((resolve, reject) => {
-        ddb.query({
-            TableName: process.env.DYNAMODB_TABLE || 'dummy-table',
-            ExpressionAttributeNames: {
-                '#CustomerNumber': 'customer-number'
-            },
-            ExpressionAttributeValues: {
-                ':cn': {
-                    'S': number
-                }
-            },
-            KeyConditionExpression: '#CustomerNumber = :cn'
-        }, function(error, data) {
-            if (error) {
-                reject(error)
-            } else {
-                if (!data.Items || data.Items.length === 0) {
-                    resolve(null)
-                } else {
-                    resolve(data.Items[0])
-                }
-            }
-        })
-    })
-}
-
-/**
-* Function that inserts the vanity numbers for a customer
-* @param    {string}    number      Customer number
-* @param    {Object[]}  data        List of the customer's top 5 vanity numbers
-*/
-const insertDynamoDBItems = async (number, data) => {
-    return new Promise((resolve, reject) => {
-        ddb.putItem({
-            TableName: process.env.DYNAMODB_TABLE || 'dummy-table',
-            ReturnConsumedCapacity: 'TOTAL',
-            Item: {
-                'customer-number': {
-                    'S': number
-                },
-                'time-created': {
-                    'N': new Date().getTime().toString()
-                },
-                'vanity-numbers': {
-                    'L': data
-                }
-            }
-        }, function(error, data) {
-            if (error) {
-                reject(error)
-            } else {
-                resolve(data)
-            }
-        })
-    })
-}
-
-/**
-* Function that calculates all of the permutations from the dial pad characters for a given input digits
-* @param    {string[]}  input           An array with the dialed digits
-* @param    {number}    inputLength     The length of the dialed digits array
-* @param    {number}    iterator        An incremental length parameter
-* @param    {string[]}  output          Temporary array with permutations
-* @returns  {string[]}  result          The result array with all of the permutations
-*/
-const dialPadPermutations = (input, inputLength, iterator, output) => {
-    if (iterator === inputLength) {
-        permutationsResult.push(output.join(''))
-    } else {
-        // Loop through the dial pad characters and calculate recursively all of the permutations
-        for (let i = 0; i < dialPad[input[iterator]].length; i++) {
-            output[iterator] = dialPad[input[iterator]][i]
-            dialPadPermutations(input, inputLength, iterator + 1, output)
-        }
-    }
-
-    return permutationsResult
-}
 
 /**
 * Lambda handler
@@ -151,7 +50,7 @@ exports.handler = async (event, context, callback) => {
             const lastDigitsArray = number.slice(-vanityLimit).split('')
             
             // Calculate all of the character permutations from the dial pad for the input digits
-            dialPadPermutations(lastDigitsArray, lastDigitsArray.length, 0, [])
+            dialPadPermutations(lastDigitsArray, lastDigitsArray.length, 0, [], permutationsResult)
 
             // Iterate over the resulted array and put any obtained meaningful words into the result array
             for (let i = 0; i < permutationsResult.length; i++) {
@@ -175,8 +74,8 @@ exports.handler = async (event, context, callback) => {
 
                 // Format the vanity numbers for storing in DynamoDB
                 for (let i = 0; i < finalResult.length; i++) {
-                    // finalResult[i] = firstDigits + finalResult[i]
-                    dynamoDBItems.push({'S': firstDigits + finalResult[i]})
+                    finalResult[i] = firstDigits + finalResult[i]
+                    dynamoDBItems.push({'S': finalResult[i]})
                 }
 
                 // Store the vanity numbers and the customer number in DynamoDB
@@ -196,7 +95,6 @@ exports.handler = async (event, context, callback) => {
             ThirdNumber: finalResult[2]
         })
 
-        // Success
         return true
     } catch (error) {
         // Log the error in CloudWatch
@@ -204,8 +102,5 @@ exports.handler = async (event, context, callback) => {
 
         // The callback function with the error object passed to the AWS Connect ContactFlow
         callback(error)
-
-        // Failure
-        return false
     }
 }
