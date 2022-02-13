@@ -177,6 +177,7 @@ Resources:
       Environment:
         Variables:
           NODE_ENV: local,
+          REGION: localhost,
           DYNAMODB_HOST: http://localhost:8000,
           DYNAMODB_TABLE: dummy-table,
           VANITY_NUMBERS_LIMIT: 5

@@ -8,9 +8,11 @@ export default class vanityNumberList extends React.Component {
         isLoading: true
     }
 
+    endpoint = process.env.REACT_APP_ENDPOINT || 'http://localhost:3000/vanity-numbers'
+
     componentDidMount() {
         // Get the vanity numbers from the last 5 callers from the API Gateway endpoint
-        axios.get('http://localhost:3000/vanity-numbers')
+        axios.get(this.endpoint)
         .then(response => {
             const vanityNumbers = response.data
             this.setState({ vanityNumbers })

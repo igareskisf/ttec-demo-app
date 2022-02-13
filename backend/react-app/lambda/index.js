@@ -1,33 +1,10 @@
-const AWS = require('aws-sdk')
-
-// Configure the DynamoDB service object
-const ddb = new AWS.DynamoDB({
-    endpoint: process.env.DYNAMODB_HOST || 'localhost'
-})
+const { getDynamoDBItems } = require('./data-services/dynamodb.js')
 
 // Enable CORS
 const cors = {
     'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key',
     'Access-Control-Allow-Methods': 'POST, GET, PUT, DELETE',
     'Access-Control-Allow-Origin': '*'
-}
-
-const getDynamoDBItems = async () => {
-    return new Promise((resolve, reject) => {
-        ddb.scan({
-            TableName: process.env.DYNAMODB_TABLE || 'dummy-table',
-        }, function(error, data) {
-            if (error) {
-                reject(error)
-            } else {
-                if (!data.Items || data.Items.length === 0) {
-                    resolve(null)
-                } else {
-                    resolve(data.Items)
-                }
-            }
-        })
-    })
 }
 
 /**
@@ -38,11 +15,11 @@ const getDynamoDBItems = async () => {
 exports.handler = async (event, context) => {
     try {
         // How many items to be returned
-        const limit = process.env.VANITY_NUMBERS_LIMIT ? praseInt(process.env.VANITY_NUMBERS_LIMIT) : 5
+        const limit = process.env.VANITY_NUMBERS_LIMIT ? parseInt(process.env.VANITY_NUMBERS_LIMIT) : 5
 
         // Retrieve all the records from the DynamoDB table (inefficient scan operation; to be replaced with a query operation if possible)
         const vanityNumbers = await getDynamoDBItems()
-        // console.log(vanityNumbers)
+        console.log(vanityNumbers)
 
         // The results array
         let result = []

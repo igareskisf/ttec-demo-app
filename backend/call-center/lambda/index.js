@@ -3,7 +3,7 @@ const words = require('an-array-of-english-words')
 
 // Configure the DynamoDB service object
 const ddb = new AWS.DynamoDB({
-    endpoint: process.env.DYNAMODB_HOST || 'localhost'
+    endpoint: process.env.DYNAMODB_HOST || 'http://localhost:8000'
 })
 
 // Phone dial pad
@@ -116,10 +116,10 @@ const dialPadPermutations = (input, inputLength, iterator, output) => {
 exports.handler = async (event, context, callback) => {
     try {
         // How many digits will be considered for the vanity numbers
-        const vanityLimit = process.env.VANITY_CHARS ? praseInt(process.env.VANITY_CHARS) : 4
+        const vanityLimit = process.env.VANITY_CHARS ? parseInt(process.env.VANITY_CHARS) : 4
 
         // How many vanity numbers will be considered
-        const topElements = process.env.VANITY_NUMBERS_LIMIT ? praseInt(process.env.VANITY_NUMBERS_LIMIT) : 5
+        const topElements = process.env.VANITY_NUMBERS_LIMIT ? parseInt(process.env.VANITY_NUMBERS_LIMIT) : 5
 
         // An array for the best 5 vanity numbers
         let finalResult = []
