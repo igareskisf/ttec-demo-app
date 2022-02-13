@@ -1,10 +1,10 @@
 import './App.css';
-import VanityNumberList from './components/VanityNumbersList';
+import VanityNumbersList from './components/vanity-numbers-list/VanityNumbersList';
 
 function App() {
   return (
     <div className='App'>
-      <VanityNumberList/>
+      <VanityNumbersList/>
     </div>
   );
 }

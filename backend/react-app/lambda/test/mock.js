@@ -89,7 +89,7 @@ const getDynamoDBItems = async (error, empty) => {
                 { 'S': '+3897666MNOP' },
                 { 'S': '+3897666QRST' }
             ]}
-        },
+        }
     ]
 }
 

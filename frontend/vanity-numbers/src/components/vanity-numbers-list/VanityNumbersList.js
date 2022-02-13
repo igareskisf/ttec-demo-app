@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.css'
 
-export default class vanityNumberList extends React.Component {
+export default class vanityNumbersList extends React.Component {
     state = {
         vanityNumbers: [],
         isLoading: true
@@ -45,11 +45,11 @@ export default class vanityNumberList extends React.Component {
                                 <tr key={item['customer-number']}>
                                     <td><strong>{item['customer-number']}</strong></td>
                                     <td>
-                                    <ul>
-                                        {item['vanity-numbers'].map(number => 
-                                        <li key={number} className="text-success">{number}</li>
-                                        )}
-                                    </ul>
+                                        <ul>
+                                            {item['vanity-numbers'].map(number => 
+                                                <li key={number} className="text-success">{number}</li>
+                                            )}
+                                        </ul>
                                     </td>
                                 </tr>
                         )}
