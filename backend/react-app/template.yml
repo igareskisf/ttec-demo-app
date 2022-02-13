@@ -35,6 +35,11 @@ Parameters:
     Default: react-lambda
     Description: Name of the Lambda function
 
+  AppBucketName:
+    Type: String
+    Default: ttec-react-app
+    Description: Name for the bucket where the React App will be server from
+
 Resources:
   ApiGatewayRole:
     Type: AWS::IAM::Role
@@ -183,3 +188,35 @@ Resources:
           VANITY_NUMBERS_LIMIT: 5
       Tags: 
         Name: TTEC React Lambda function
+
+  AppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Ref AppBucketName
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+      Tags:
+        -
+          Key: Name
+          Value: React App hosting bucket
+
+  AppBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref AppBucket
+      PolicyDocument:
+        Id: ReactAppBucketPolicy
+        Version: 2012-10-17
+        Statement:
+          - Sid: PublicReadForGetBucketObjects
+            Effect: Allow
+            Principal: '*'
+            Action: s3:GetObject
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref AppBucket, /*]]
+
+Outputs:
+  AppUrl:
+    Description: URL for the React App hosted on S3
+    Value: !GetAtt AppBucket.WebsiteURL
