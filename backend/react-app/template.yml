@@ -55,9 +55,9 @@ Parameters:
     Default: http://localhost:8000
     Description: DynamoDB endpoint
 
-  DynamoDbTable:
+  DynamoDbTableName:
     Type: String
-    Default: dummy-table
+    Default: customer-vanity-numbers
     Description: Name of the DynamoDB table
 
   VanityLimit:
@@ -210,7 +210,7 @@ Resources:
           NODE_ENV: !Ref Env
           REGION: !Ref EnvRegion
           DYNAMODB_HOST: !Ref DynamoDBHost
-          DYNAMODB_TABLE: !Ref DynamoDbTable
+          DYNAMODB_TABLE: !Ref DynamoDbTableName
           VANITY_NUMBERS_LIMIT: !Ref VanityLimit
       Tags: 
         Name: TTEC React Lambda function

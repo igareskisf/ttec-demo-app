@@ -59,11 +59,6 @@ Parameters:
     Default: http://localhost:8000
     Description: DynamoDB endpoint
 
-  DynamoDbTable:
-    Type: String
-    Default: dummy-table
-    Description: Name of the DynamoDB table
-
   VanityLimit:
     Type: String
     Default: '5'
@@ -148,7 +143,7 @@ Resources:
           NODE_ENV: !Ref Env
           REGION: !Ref EnvRegion
           DYNAMODB_HOST: !Ref DynamoDBHost
-          DYNAMODB_TABLE: !Ref DynamoDbTable
+          DYNAMODB_TABLE: !Ref DynamoDBTableName
           VANITY_NUMBERS_LIMIT: !Ref VanityLimit
           VANITY_CHARS: !Ref VanityChars
       Tags:
