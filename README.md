@@ -214,7 +214,7 @@ To begin with, the static content from S3 could be served through CloudFront to 
 
 Second, the API Gateway requests could be authorized by incorporating a custom token-based Lambda authorizer (one way of doing it) that will control the API access. Moreover, usage plans and API keys could also be added to further secure the API and set quotas for different users and use cases.
 
-Third, Lambda functions can be enriched with a logic to further improve the request parameters validation and error handling. Better logging and monitoring is also a possibility through integration of some third-party logging libraries and tools such as DataDog, AWS X-Ray etc. Configuration parameters could be stored inside the Parameter Store and sensitive information should be encrypted/decrypted using KMS.
+Third, Lambda functions can be enriched with a logic to further improve the request parameters validation (for example, the number of characters generated cannot exceed the phone number length etc.) and error handling. Better logging and monitoring is also a possibility through integration of some third-party logging libraries and tools such as DataDog, AWS X-Ray etc. Configuration parameters could be stored inside the Parameter Store and sensitive information should be encrypted/decrypted using KMS.
 
 Furthermore, to increase the data durability we can also use the DynamoDB Global Tables to allow for multi-region data replication, and also we can migrate to the on-demand capacity mode, which will make our DynamoDB capable of serving thousands of requests per second with a minimum latency. Another aspect is enabling the point-in-time recovery parameter, which will provide continuous backups for our data and make our application more resilient.
 

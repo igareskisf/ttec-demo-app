@@ -1,21 +1,11 @@
 version=0.1
 
-[default]
+[default.global.parameters]
+parameter_overrides = "ParameterKey=Env,ParameterValue=local ParameterKey=EnvRegion,ParameterValue=localhost ParameterKey=DynamoDBHost,ParameterValue=http://172.18.0.2:8000 ParameterKey=DynamoDBTable,ParameterValue=customer-vanity-numbers-v2 ParameterKey=VanityLimit,ParameterValue=5"
 
-[default.local_invoke]
-[default.local_invoke.parameters]
-env_vars = "env/local.json"
-
-[default.local_start_api]
-[default.local_start_api.parameters]
-env_vars = "env/local.json"
-
-[default.build]
 [default.build.parameters]
 no_beta_features = true
-env_vars = "env/local.json"
 
-[default.deploy]
 [default.deploy.parameters]
 stack_name = "ttec-react-stack"
 region = "us-east-1"
@@ -23,24 +13,13 @@ s3_bucket = "ttec-deployment-artifacts"
 s3_prefix = "react-app"
 capabilities = "CAPABILITY_NAMED_IAM"
 confirm_changeset = true
-env_vars = "env/local.json"
 
-[dev]
+[dev.global.parameters]
+parameter_overrides = "ParameterKey=Env,ParameterValue=development ParameterKey=EnvRegion,ParameterValue=us-east-1 ParameterKey=DynamoDBHost,ParameterValue=dynamodb.us-east-1.amazonaws.com ParameterKey=DynamoDBTable,ParameterValue=customer-vanity-numbers ParameterKey=VanityLimit,ParameterValue=5"
 
-[dev.local_invoke]
-[dev.local_invoke.parameters]
-env_vars = "env/dev.json"
-
-[dev.local_start_api]
-[dev.local_start_api.parameters]
-env_vars = "env/dev.json"
-
-[dev.build]
 [dev.build.parameters]
 no_beta_features = true
-env_vars = "env/dev.json"
 
-[dev.deploy]
 [dev.deploy.parameters]
 stack_name = "ttec-react-stack-dev"
 region = "us-east-1"
@@ -48,4 +27,3 @@ s3_bucket = "ttec-deployment-artifacts"
 s3_prefix = "react-app-dev"
 capabilities = "CAPABILITY_NAMED_IAM"
 confirm_changeset = true
-env_vars = "env/dev.json"

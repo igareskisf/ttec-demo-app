@@ -40,6 +40,31 @@ Parameters:
     Default: ttec-react-app
     Description: Name for the bucket where the React App will be server from
 
+  Env:
+    Type: String
+    Default: local
+    Description: Lambda runtime environment
+
+  EnvRegion:
+    Type: String
+    Default: localhost
+    Description: AWS Region
+
+  DynamoDBHost:
+    Type: String
+    Default: http://localhost:8000
+    Description: DynamoDB endpoint
+
+  DynamoDbTable:
+    Type: String
+    Default: dummy-table
+    Description: Name of the DynamoDB table
+
+  VanityLimit:
+    Type: String
+    Default: '5'
+    Description: Limit for the vanity numbers list
+
 Resources:
   ApiGatewayRole:
     Type: AWS::IAM::Role
@@ -182,11 +207,11 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_ENV: local
-          REGION: localhost
-          DYNAMODB_HOST: http://localhost:8000
-          DYNAMODB_TABLE: dummy-table
-          VANITY_NUMBERS_LIMIT: 5
+          NODE_ENV: !Ref Env
+          REGION: !Ref EnvRegion
+          DYNAMODB_HOST: !Ref DynamoDBHost
+          DYNAMODB_TABLE: !Ref DynamoDbTable
+          VANITY_NUMBERS_LIMIT: !Ref VanityLimit
       Tags: 
         Name: TTEC React Lambda function
 
