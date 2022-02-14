@@ -19,7 +19,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "upload": "aws s3 sync build/ s3://ttec-react-app --delete",
-    "deploy": "npm run build && npm run upload"
+    "deploy": "npm run build && npm run upload",
+    "deploy:dev": "set NODE_ENV=development && npm run build && npm run upload"
   },
   "eslintConfig": {
     "extends": [
