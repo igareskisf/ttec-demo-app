@@ -92,6 +92,7 @@ Resources:
             - 
               Effect: Allow
               Action:
+                - dynamodb:Query
                 - dynamodb:GetItem
                 - dynamodb:PutItem
               Resource:
@@ -114,10 +115,10 @@ Resources:
       Timeout: 8 #This is the maximum timeout allowed by AWS Connect
       Environment:
         Variables:
-          NODE_ENV: local,
-          REGION: localhost,
-          DYNAMODB_HOST: http://localhost:8000,
-          DYNAMODB_TABLE: dummy-table,
+          NODE_ENV: local
+          REGION: localhost
+          DYNAMODB_HOST: http://localhost:8000
+          DYNAMODB_TABLE: dummy-table
           VANITY_NUMBERS_LIMIT: 5
           VANITY_CHARS: 4
       Tags:

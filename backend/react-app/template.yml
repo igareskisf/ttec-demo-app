@@ -161,6 +161,7 @@ Resources:
               Effect: Allow
               Action:
                 - dynamodb:GetItem
+                - dynamodb:Scan
               Resource:
                 - !ImportValue DynamoDBTableArn
       RoleName: !Ref LambdaRoleName
@@ -181,10 +182,10 @@ Resources:
       Timeout: 30
       Environment:
         Variables:
-          NODE_ENV: local,
-          REGION: localhost,
-          DYNAMODB_HOST: http://localhost:8000,
-          DYNAMODB_TABLE: dummy-table,
+          NODE_ENV: local
+          REGION: localhost
+          DYNAMODB_HOST: http://localhost:8000
+          DYNAMODB_TABLE: dummy-table
           VANITY_NUMBERS_LIMIT: 5
       Tags: 
         Name: TTEC React Lambda function
