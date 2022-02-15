@@ -61,6 +61,9 @@ Tests are defined in the `./backend/call-center/lambda/test` folder. Run the fol
 npm run test
 ```
 
+## Amazon Connect Logging
+The logs for this application will be stored in the CloudWatch log group for the created Lambda function.
+
 ## Amazon Connect Cleanup
 To delete the application, change directory to `./backend/call-center` and run
 
@@ -69,9 +72,6 @@ sam delete --config-env dev
 ```
 
 **NOTE:** That is the last command to run when doing a cleanup. Before it you should remove the React application Stack and the application itself as well.
-
-## Amazon Connect Logging
-The logs for this application will be stored in the CloudWatch log group for the created Lambda function.
 
 ## React Backend
 This project incorporates the creation of an API Gateway that integrates with a Lambda function that returns the vanity numbers from the last 5 callers, used in the frontend application.
@@ -105,6 +105,9 @@ Tests are defined in the `./backend/react-app/lambda/test` folder. Run the follo
 npm run test
 ```
 
+## React Backend Logging
+The logs for this application will be logged in the CloudWatch log group for the created Lambda function.
+
 ## React Backend Cleanup
 To delete the application, change directory to `./backend/react-app` and run
 
@@ -113,9 +116,6 @@ sam delete --config-env dev
 ```
 
 **NOTE:** This command should be executed before deleting the resources for the Amazon Connect Stack.
-
-## React Backend Logging
-The logs for this application will be logged in the CloudWatch log group for the created Lambda function.
 
 ## React Frontend
 This is a very simple frontend React application that connects to an Amazon API Gateway endpoint and displays the vanity numbers from the last 5 callers along with the caller's phone numbers in a table view. The application was bootstrapped using `create-react-app`.
