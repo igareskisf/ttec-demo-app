@@ -20,7 +20,7 @@ To be able to build and deploy this project to AWS you will need to install and 
 - [Node.js](https://nodejs.org/dist/v16.14.0/node-v16.14.0-x64.msi)
 - [Amazon Connect instance](https://docs.aws.amazon.com/connect/latest/adminguide/tutorial1-set-up-your-instance.html)
 
-To deploy the project, first you clone the GitHub [repository](https://github.com/igareskisf/ttec-demo-app.git) at a location on your local machine `cd` to the `ttec-demo-app` directory. This is the root of the project and all of the commands explained below are executed relative to this directory. 
+To deploy the project, first you clone the GitHub [repository](https://github.com/igareskisf/ttec-demo-app.git) at a location on your local machine and then `cd` to the `ttec-demo-app` directory. This is the root of the project and all of the commands explained below are executed relative to this directory. 
 
 ## The Backend
 The backend consists of two parts:
@@ -51,7 +51,7 @@ sam deploy --config-env dev --guided
 
 The interactive wizard will guide you through the parameters defined in the `samconfig.toml` configuration file. You can accept the defaults or change them. Provide values where required. After that, the CloudFormation Stack with all of the resources will be created. When the process finishes, you should [update](https://docs.aws.amazon.com/connect/latest/adminguide/connect-lambda-functions.html) the operating Amazon Connect instance with the Lambda function that was created. This way the Amazon Connect is granted a permission to invoke the Lambda.
 
-Now you can log in in Amazon Connect and link the phone number used for testing with the created ContactFlow.
+Now you can log in Amazon Connect and link the phone number used for testing with the created ContactFlow.
 
 ## Amazon Connect ContactFlow Unit Tests
 
